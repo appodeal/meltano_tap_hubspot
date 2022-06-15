@@ -10,6 +10,12 @@ ENTITIES = {
     "contacts": ContactsStream,
 }
 
+CONFIG_VARS = {
+    "full_refresh": "TAP_HUBSPOT_FULL_REFRESH",
+    "access_token": "TAP_HUBSPOT_ACCESS_TOKEN",
+    "hapikey": "TAP_HUBSPOT_HAPIKEY",
+}
+
 
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
@@ -34,9 +40,9 @@ class TapHubspot(Tap):
     def discover_streams(self) -> List[Stream]:
         """Return a list of discovered streams."""
 
-        self._config["full_refresh"] = str2bool(
-            os.environ.get("TAP_HUBSPOT_FULL_REFRESH", False)
-        )
+        for k, v in CONFIG_VARS.items():
+            if os.environ.get(v):
+                self._config[k] = os.environ.get(v)
 
         return [
             ENTITIES[stream](tap=self, params=params)
