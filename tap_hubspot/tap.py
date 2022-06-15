@@ -44,6 +44,8 @@ class TapHubspot(Tap):
             if os.environ.get(v):
                 self._config[k] = os.environ.get(v)
 
+        self._config["full_refresh"] = str2bool(self._config["full_refresh"])
+
         return [
             ENTITIES[stream](tap=self, params=params)
             for stream, params in self.config.get("entities").items()

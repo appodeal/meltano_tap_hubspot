@@ -11,6 +11,7 @@ class ContactsStream(Stream):
         self._full_refresh = tap.config.get("full_refresh")
         self._hubspot = HubspotClient(tap.config)
         self._properties = params.get("properties", [])
+        self._system_properties = ["vid", "addedAt"]
         super().__init__(tap=tap)
 
     @property
@@ -24,7 +25,10 @@ class ContactsStream(Stream):
 
     @property
     def schema(self) -> dict:
-        properties = [th.Property(p, th.StringType) for p in ["vid", *self._properties]]
+        properties = [
+            th.Property(p, th.StringType)
+            for p in [*self._system_properties, *self._properties]
+        ]
 
         return th.PropertiesList(*properties).to_dict()
 
@@ -36,7 +40,7 @@ class ContactsStream(Stream):
         )
 
         for raw_row in data:
-            row = {"vid": raw_row["vid"]}
+            row = {key: raw_row[key] for key in self._system_properties}
 
             for p in self._properties:
                 value = raw_row["properties"].get(p)
