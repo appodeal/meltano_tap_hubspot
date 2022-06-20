@@ -1,4 +1,3 @@
-import os
 import json
 from singer_sdk import typing as th
 from singer_sdk import Stream
@@ -44,6 +43,6 @@ class ContactsStream(Stream):
 
             for p in self._properties:
                 value = raw_row["properties"].get(p)
-                row[p] = value["value"] if value else ""
+                row[p] = json.dumps(value) if value else None
 
             yield row

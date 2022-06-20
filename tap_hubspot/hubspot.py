@@ -39,6 +39,7 @@ class HubspotClient:
                 {"timeOffset": time_offset, "property": properties},
             )
             has_more = data["has-more"]
+            has_more = False
             time_offset = data["time-offset"]
             contacts += data["contacts"]
 
@@ -48,7 +49,7 @@ class HubspotClient:
         request_params = {
             "count": 500,
             "property": ["email", "firstname", "hs_legal_basis", "acc__status"],
-            "value_only": True,
+            "propertyMode": "value_and_history",
             "formSubmissionMode": "none",
             **params,
         }
